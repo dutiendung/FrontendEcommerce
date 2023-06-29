@@ -1,39 +1,32 @@
+import { useEffect, useState } from "react";
+import { Link } from "react-router-dom";
+import { GET_ALL_CATEGORIES } from "~/Services/Api/apiServices";
+
 function Nav() {
+  const [categories, setCategories] = useState([]);
+  useEffect(() => {
+    GET_ALL_CATEGORIES("categories").then((item) => setCategories(item.data));
+  }, []);
+
   return (
     <nav id="navigation">
       <div className="container">
         <div id="responsive-nav">
           <ul className="main-nav nav nav-navbar">
             <li>
-              <a href="#" className="text-decoration-none">
-                Điện thoại
-              </a>
+              <Link to={"all-products"}>
+                <div>Tất cả sảm phẩm</div>
+              </Link>
             </li>
-            <li>
-              <a href="#" className="text-decoration-none">
-                Tablet
-              </a>
-            </li>
-            <li>
-              <a href="#" className="text-decoration-none">
-                Laptop
-              </a>
-            </li>
-            <li>
-              <a href="#" className="text-decoration-none">
-                Đồng hồ
-              </a>
-            </li>
-            <li>
-              <a href="#" className="text-decoration-none">
-                Phụ kiện
-              </a>
-            </li>
-            <li>
-              <a href="#" className="text-decoration-none">
-                Khuyến mại
-              </a>
-            </li>
+            {categories.map((category) => {
+              return (
+                <li key={category.id}>
+                  <Link to={category.slug}>
+                    <div>{category.title}</div>
+                  </Link>
+                </li>
+              );
+            })}
           </ul>
         </div>
       </div>

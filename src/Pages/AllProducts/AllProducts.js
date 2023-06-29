@@ -1,10 +1,10 @@
 import { useEffect, useState } from "react";
+import CardProduct from "~/Components/CardProduct";
 import {
   GET_ALL_CATEGORIES,
   GET_ALL_PRODUCTREVIEW,
   GET_ALL_PRODUCTS,
 } from "~/Services/Api/apiServices";
-import CardProduct from "../CardProduct/CardProduct";
 
 function AllProducts() {
   const [categories, setCategories] = useState([]);
@@ -15,13 +15,9 @@ function AllProducts() {
     GET_ALL_CATEGORIES("categories").then((item) => {
       return setCategories(item.data);
     });
-  }, []);
-  useEffect(() => {
     GET_ALL_PRODUCTS("products").then((item) => {
       return setProducts(item.data);
     });
-  }, []);
-  useEffect(() => {
     GET_ALL_PRODUCTREVIEW("ProductReviews").then((item) => {
       return setProductReview(item.data);
     });
@@ -31,7 +27,7 @@ function AllProducts() {
       <div className="container">
         <div className="row">
           {products.map((product) => (
-            <div className="col-md-3">
+            <div key={product.id} className="col-md-3">
               <CardProduct
                 product={product}
                 categories={categories}

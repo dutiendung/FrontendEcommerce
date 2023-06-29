@@ -43,3 +43,6 @@ export function GET_PRODUCTREVIEW_ID(endpoint, id) {
 export function GET_ALL_PRODUCTREVIEW(endpoint) {
   return callApi(endpoint, "GET");
 }
+export function GET_DEALS(endpoint) {
+  return callApi(endpoint, "GET");
+}

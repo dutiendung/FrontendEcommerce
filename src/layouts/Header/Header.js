@@ -1,14 +1,23 @@
-import React, { useEffect, useState } from "react";
-import { Link, useSearchParams } from "react-router-dom";
-import { GET_ALL_PRODUCTS } from "~/Services/Api/apiServices";
-import { useDebounce } from "~/hooks";
 import Tippy from "@tippyjs/react/headless";
+import { useEffect, useState } from "react";
+import { useSelector } from "react-redux";
+import { Link } from "react-router-dom";
+import {
+  GET_ALL_CATEGORIES,
+  GET_ALL_PRODUCTS,
+} from "~/Services/Api/apiServices";
+import { useDebounce } from "~/hooks";
 function Header() {
   // search
   const [searchValue, setSearchValue] = useState("");
+  const [categories, setCategories] = useState([]);
   const [searchResult, setSearchResult] = useState([]);
   const debouncedValue = useDebounce(searchValue, 500);
   const [popupSearch, setPopupSearch] = useState(true);
+  const [currentSelectSearch, setCurrentSelectSearch] = useState("all");
+  const qtyWishList = useSelector((state) => state.wishLists).length;
+  const qtyCart = useSelector((state) => state.carts).length;
+
   const handleChange = (e) => {
     const searchValue = e.target.value;
     if (!searchValue.startsWith(" ")) {
@@ -25,12 +34,20 @@ function Header() {
       setSearchResult(item.data);
     });
   }, [debouncedValue]);
+  useEffect(() => {
+    GET_ALL_CATEGORIES("categories").then((item) => setCategories(item.data));
+  }, []);
   function handleHideResult() {
     setSearchResult([]);
     setSearchValue("");
   }
   function handleBtnSearch() {
     setPopupSearch(false);
+  }
+  function handleChangeSelect(e) {
+    let select = e.target;
+    let value = select.options[select.selectedIndex].value;
+    setCurrentSelectSearch(+value);
   }
   // end search
 
@@ -41,7 +58,7 @@ function Header() {
           <ul className="header-links">
             <li>
               <a href="#" className="text-decoration-none">
-                <i class="fa fa-phone" aria-hidden="true"></i>
+                <i className="fa fa-phone" aria-hidden="true"></i>
                 +08-8402340823
               </a>
             </li>
@@ -84,30 +101,53 @@ function Header() {
                 {/* search */}
                 <div className="header-search">
                   <Tippy
+                    placement="bottom"
                     onClickOutside={handleHideResult}
                     interactive
                     visible={searchResult.length > 0 && popupSearch}
                     render={(attrs) => (
                       <div className="wrapper" tabIndex="-1" {...attrs}>
-                        {searchResult.map((result) => (
-                          <div
-                            onClick={() => setSearchValue(result.title)}
-                            key={result.id}
-                            className="result"
-                          >
-                            {result.title}
-                          </div>
-                        ))}
+                        {searchResult.map((result) => {
+                          if (result.catId === currentSelectSearch) {
+                            setPopupSearch(true);
+                            return (
+                              <div
+                                onClick={() => setSearchValue(result.title)}
+                                key={result.id}
+                                className="result"
+                              >
+                                {result.title}
+                              </div>
+                            );
+                          } else if (currentSelectSearch === "all") {
+                            setPopupSearch(true);
+                            return (
+                              <div
+                                onClick={() => setSearchValue(result.title)}
+                                key={result.id}
+                                className="result"
+                              >
+                                {result.title}
+                              </div>
+                            );
+                          } else {
+                            setPopupSearch(false);
+                          }
+                        })}
                       </div>
                     )}
                   >
                     <form>
-                      <select className="input-select">
-                        <option value="0">Tất cả sảm phẩm</option>
-                        <option value="1">Laptop</option>
-                        <option value="1">Điện thoại</option>
-                        <option value="1">Máy tính bảng</option>
-                        <option value="1">Phụ kiện</option>
+                      <select
+                        className="input-select"
+                        onChange={handleChangeSelect}
+                      >
+                        <option value="all">Tất cả sảm phẩm</option>
+                        {categories.map((category) => (
+                          <option key={category.id} value={category.id}>
+                            {category.title}
+                          </option>
+                        ))}
                       </select>
 
                       <input
@@ -120,7 +160,7 @@ function Header() {
                       {searchValue !== "" && (
                         <i
                           onClick={() => setSearchValue("")}
-                          class={`clear fa fa-times-circle-o`}
+                          className={`clear fa fa-times-circle-o`}
                           aria-hidden="true"
                         ></i>
                       )}
@@ -142,9 +182,9 @@ function Header() {
                 <div className="header-ctn ">
                   <div>
                     <Link to="/wishlist" className="text-decoration-none">
-                      <i class="fa fa-heart-o"></i>
+                      <i className="fa fa-heart-o"></i>
                       <span>Yêu thích</span>
-                      <div className="qty">2</div>
+                      <div className="qty">{qtyWishList}</div>
                     </Link>
                   </div>
                   <div className="dropdown">
@@ -152,13 +192,13 @@ function Header() {
                       className="dropdown-toggle text-decoration-none"
                       to={"/shopping-cart"}
                     >
-                      <i class="fa fa-shopping-cart"></i>
+                      <i className="fa fa-shopping-cart"></i>
                       <span>Giỏ hàng</span>
-                      <div className="qty">5</div>
+                      <div className="qty">{qtyCart}</div>
                     </Link>
                   </div>
                   <div className="menu-toggle">
-                    <a href="#">
+                    <a href="/">
                       <i className="fa fa-bars"></i>
                       <span>Menu</span>
                     </a>

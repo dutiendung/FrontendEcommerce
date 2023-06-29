@@ -1,22 +1,65 @@
 import { Button } from "react-bootstrap";
+import { Link } from "react-router-dom";
+import { useDispatch, useSelector } from "react-redux";
+import { addToCart } from "~/Pages/Cart/cartSlice";
+import { addWishList } from "~/Pages/WishList/wishlistSlice";
+import { toast } from "react-toastify";
+
 function CardProduct({ product, categories, productReview }) {
   //product phai map truoc khi truyen qua day
+  const dispath = useDispatch();
+  function handleAddToCart(product) {
+    console.log(1);
+    const action = addToCart(product);
+    dispath(action);
+  }
+  function handleAddToWishList(product) {
+    const action = addWishList(product);
+    dispath(action);
+  }
+
+  const wishLists = useSelector((state) => state.wishLists);
+  localStorage.setItem("wishLists", JSON.stringify(wishLists));
+  const notifyAddToCart = () =>
+    toast.success("Đã thêm vào giỏ hàng ", {
+      position: "top-right",
+      autoClose: 2000,
+      hideProgressBar: false,
+      closeOnClick: true,
+      pauseOnHover: true,
+      draggable: true,
+      progress: undefined,
+      theme: "light",
+    });
+  const notifyAddToWishList = () =>
+    toast.success("Đã thêm vào danh sách yêu thích ", {
+      position: "top-right",
+      autoClose: 2000,
+      hideProgressBar: false,
+      closeOnClick: true,
+      pauseOnHover: true,
+      draggable: true,
+      progress: undefined,
+      theme: "light",
+    });
   return (
     <div key={product.id} className="product">
-      <div className="product-img">
-        <img
-          alt={product.tile}
-          src={require(`../../assets/images/products/${product.photo}`)}
-        />
-        <div className="product-label">
-          <span className="sale">Discount {product.discount} %</span>
-          <span className="new">NEW</span>
-          {/* {new Date(product.createdAt).toDateString() ==
-                                      new Date().toDateString() && (
-                                      
-                                    )} */}
+      <Link to={`/products/${product.id}`} reloadDocument>
+        <div className="product-img">
+          <img
+            alt={product.tile}
+            src={require(`../../assets/images/products/${product.photo}`)}
+          />
+          <div className="product-label">
+            <span className="sale">Discount {product.discount} %</span>
+            <span className="new">NEW</span>
+            {/* {new Date(product.createdAt).toDateString() ==
+                                        new Date().toDateString() && (
+                                        
+            )} */}
+          </div>
         </div>
-      </div>
+      </Link>
       <div className="product-body">
         <p className="product-category">
           {categories.map((cate) =>
@@ -90,12 +133,15 @@ function CardProduct({ product, categories, productReview }) {
           <Button
             id={product.id}
             className="add-to-wishlist"
-            //onClick={console.log(11)}
+            onClick={() => {
+              notifyAddToCart();
+              return handleAddToCart(product);
+            }}
             bsPrefix="q"
           >
             <i
               id={product.id}
-              class="fa fa-shopping-cart"
+              className="fa fa-shopping-cart"
               aria-hidden="true"
             ></i>
             <span className="tooltipp">Add to cart</span>
@@ -103,7 +149,10 @@ function CardProduct({ product, categories, productReview }) {
           <Button
             id={product.id}
             className="add-to-wishlist"
-            //onClick={console.log(11)}
+            onClick={() => {
+              notifyAddToWishList();
+              return handleAddToWishList(product);
+            }}
             bsPrefix="q"
           >
             <i id={product.id} className="fa fa-heart-o"></i>
@@ -113,17 +162,9 @@ function CardProduct({ product, categories, productReview }) {
             <i className="fa fa-exchange"></i>
             <span className="tooltipp">Add to compare</span>
           </button>
-          <Button
-            id={product.id}
-            className="quick-view"
-            //onClick={console.log(11)}
-            bsPrefix="q"
-          >
-            <i
-              id={product.id}
-              //onClick={console.log(11)}
-              className="fa fa-eye"
-            ></i>
+
+          <Button id={product.id} className="quick-view" bsPrefix="q">
+            <i id={product.id} className="fa fa-eye"></i>
             <span className="tooltipp">Quick view</span>
           </Button>
         </div>

@@ -1,28 +1,23 @@
 import { useEffect, useState } from "react";
-import { useSearchParams } from "react-router-dom";
-import CardProduct from "~/Components/CardProduct/CardProduct";
 import {
   GET_ALL_CATEGORIES,
   GET_ALL_PRODUCTREVIEW,
   GET_ALL_PRODUCTS,
 } from "~/Services/Api/apiServices";
-function Search() {
-  let [searchParams, setSearchParams] = useSearchParams();
+import CardProduct from "~/Components/CardProduct";
+
+function ProductsCategories({ catId }) {
   const [categories, setCategories] = useState([]);
+  const [products, setProducts] = useState([]);
   const [productReview, setProductReview] = useState([]);
-  const [searchResult, setSearchResult] = useState([]);
-  const value = searchParams.get("value");
+
   useEffect(() => {
     GET_ALL_CATEGORIES("categories").then((item) => {
       return setCategories(item.data);
     });
-  }, []);
-  useEffect(() => {
-    GET_ALL_PRODUCTS(`products?search=${value}`).then((item) => {
-      setSearchResult(item.data);
+    GET_ALL_PRODUCTS("products").then((item) => {
+      return setProducts(item.data);
     });
-  }, [value]);
-  useEffect(() => {
     GET_ALL_PRODUCTREVIEW("ProductReviews").then((item) => {
       return setProductReview(item.data);
     });
@@ -31,8 +26,8 @@ function Search() {
     <>
       <div className="container">
         <div className="row">
-          {searchResult.length !== 0 && value !== "" ? (
-            searchResult.map((product) => (
+          {products.map((product) =>
+            product.catId === catId ? (
               <div key={product.id} className="col-md-3">
                 <CardProduct
                   product={product}
@@ -40,11 +35,9 @@ function Search() {
                   productReview={productReview}
                 />
               </div>
-            ))
-          ) : (
-            <h4 className="text-center mt-20">
-              Không có kết quả nào phù hợp vui lòng nhập từ khóa khác
-            </h4>
+            ) : (
+              ""
+            )
           )}
         </div>
       </div>
@@ -52,4 +45,4 @@ function Search() {
   );
 }
 
-export default Search;
+export default ProductsCategories;

@@ -1,8 +1,7 @@
 import { useEffect, useState } from "react";
-import { Button } from "react-bootstrap";
 import { Link } from "react-router-dom";
 import Slider from "react-slick";
-import CardProduct from "~/Components/CardProduct/CardProduct";
+import CardProduct from "~/Components/CardProduct";
 import {
   GET_ALL_CATEGORIES,
   GET_ALL_PRODUCTREVIEW,
@@ -12,20 +11,17 @@ function Carousel(props) {
   const [categories, setCategories] = useState([]);
   const [products, setProducts] = useState([]);
   const [productReview, setProductReview] = useState([]);
-  const [loading, setLoading] = useState(false);
-  const [currentCategory, setCurrentCategory] = useState(1);
+  const [loading, setLoading] = useState(true);
+  const [currentCategory, setCurrentCategory] = useState("all");
 
   useEffect(() => {
     GET_ALL_CATEGORIES("categories").then((item) => {
       return setCategories(item.data);
     });
-  }, []);
-  useEffect(() => {
     GET_ALL_PRODUCTS("products").then((item) => {
+      setLoading(false);
       return setProducts(item.data);
     });
-  }, []);
-  useEffect(() => {
     GET_ALL_PRODUCTREVIEW("ProductReviews").then((item) => {
       return setProductReview(item.data);
     });
@@ -34,9 +30,10 @@ function Carousel(props) {
   var setting = {
     slidesToShow: 4,
     slidesToScroll: 3,
-    autoPlay: true,
-    infinity: true,
+    autoplay: true,
+    speed: 300,
     dots: false,
+    infinity: true,
     arrows: true,
     response: [
       {
@@ -64,22 +61,34 @@ function Carousel(props) {
               <h3 className="title">{props.title}</h3>
               <div className="section-nav">
                 <ul className="section-tab-nav tab-nav">
-                  {categories.map((cate) => (
-                    <li
-                      key={cate.id}
-                      className={cate.id === currentCategory ? "active" : ""}
+                  <li className={currentCategory === "all" ? "active" : ""}>
+                    <a
+                      onClick={() => setCurrentCategory("all")}
+                      data-toggle="tab"
+                      className="text-decoration-none"
                     >
-                      {/* eslint-disable-next-line jsx-a11y/anchor-is-valid */}
-                      <a
-                        key={cate.id}
-                        data-toggle="tab"
-                        onClick={() => setCurrentCategory(cate.id)}
-                        className="text-decoration-none"
+                      Tất cả
+                    </a>
+                  </li>
+                  {categories.map((category) => {
+                    return (
+                      <li
+                        key={category.id}
+                        className={
+                          category.id === currentCategory ? "active" : ""
+                        }
                       >
-                        {cate.title}
-                      </a>
-                    </li>
-                  ))}
+                        <a
+                          key={category.id}
+                          data-toggle="tab"
+                          onClick={() => setCurrentCategory(category.id)}
+                          className="text-decoration-none"
+                        >
+                          {category.title}
+                        </a>
+                      </li>
+                    );
+                  })}
                 </ul>
               </div>
             </div>
@@ -93,34 +102,39 @@ function Carousel(props) {
                   {/* tab */}
                   <div id={"tab" + props.id} className="tab-pane active">
                     <div
-                      className="product-slick"
+                      className="product-slick text-center"
                       data-nav={"#slick-nav-" + props.id}
                     >
-                      <Slider {...setting}>
-                        {products.length > 0 &&
-                          products.map((product) => {
-                            //tttt
-                            if (product.catId === currentCategory) {
-                              return (
-                                <CardProduct
-                                  product={product}
-                                  categories={categories}
-                                  productReview={productReview}
-                                />
-                              );
-                            } else if (currentCategory === 13) {
-                              return (
-                                <CardProduct
-                                  product={product}
-                                  categories={categories}
-                                  productReview={productReview}
-                                />
-                              );
-                            } else {
-                              return <div></div>;
-                            }
-                          })}
-                      </Slider>
+                      {loading ? (
+                        <span className="loader"></span>
+                      ) : (
+                        <Slider {...setting}>
+                          {products.length > 2 &&
+                            products.map((product) => {
+                              if (product.catId === currentCategory) {
+                                return (
+                                  <CardProduct
+                                    key={product.id}
+                                    product={product}
+                                    categories={categories}
+                                    productReview={productReview}
+                                  />
+                                );
+                              } else if (currentCategory === "all") {
+                                return (
+                                  <CardProduct
+                                    key={product.id}
+                                    product={product}
+                                    categories={categories}
+                                    productReview={productReview}
+                                  />
+                                );
+                              } else {
+                                return "";
+                              }
+                            })}
+                        </Slider>
+                      )}
                     </div>
                     <div
                       id={"slick-nav" + props.id}
@@ -133,7 +147,7 @@ function Carousel(props) {
           </div>
         </div>
         {/* aaaa */}
-        <Link className="text-decoration-none " to={"/AllProducts"}>
+        <Link className="text-decoration-none " to={"all-products"}>
           <div className="text-center mt-3 ">...Xem tất cả sảm phẩm</div>
         </Link>
       </div>
