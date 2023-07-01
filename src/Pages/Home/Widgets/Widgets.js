@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
-import WidgetColumn from "./WidgetColumn/WidgetColumn";
 import { GET_ALL_PRODUCTS } from "~/Services/Api/apiServices";
+import WidgetColumn from "./WidgetColumn/WidgetColumn";
 function Widgets() {
   const [products, setProducts] = useState([]);
 

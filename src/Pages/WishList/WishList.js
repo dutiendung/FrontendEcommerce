@@ -2,9 +2,9 @@ import { useDispatch, useSelector } from "react-redux";
 import { Link } from "react-router-dom";
 import { toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
+import EmptyProduct from "~/Components/EmptyProduct";
 import { addToCart } from "../Cart/cartSlice";
 import { removeItemWishList } from "./wishlistSlice";
-import EmptyProduct from "~/Components/EmptyProduct";
 function WishList() {
   const wishLists = useSelector((state) => state.wishLists);
   localStorage.setItem("wishLists", JSON.stringify(wishLists));
@@ -76,8 +76,12 @@ function WishList() {
                     {wishList.stock}
                     <i
                       onClick={() => {
-                        handleAddToCart(wishList);
                         notify();
+                        let obj = {
+                          //fix Object is not extensible
+                          ...wishList,
+                        };
+                        handleAddToCart(obj);
                       }}
                       className="fa fa-cart-plus wishlist-addcart"
                       aria-hidden="true"

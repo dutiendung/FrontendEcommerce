@@ -1,10 +1,10 @@
 import { useEffect, useState } from "react";
+import CardProduct from "~/Components/CardProduct";
 import {
   GET_ALL_CATEGORIES,
   GET_ALL_PRODUCTREVIEW,
   GET_ALL_PRODUCTS,
 } from "~/Services/Api/apiServices";
-import CardProduct from "~/Components/CardProduct";
 import HotDeals from "../HotDeals";
 
 function DiscountProducts() {

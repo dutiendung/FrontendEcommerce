@@ -1,22 +1,34 @@
-import { useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import { removeToCart } from "./cartSlice";
 import EmptyProduct from "~/Components/EmptyProduct/EmptyProduct";
+import { addToCart, decrementAnItem, removeToCart } from "./cartSlice";
+import { Link } from "react-router-dom";
 
 function Cart() {
   const carts = useSelector((state) => state.carts);
   localStorage.setItem("carts", JSON.stringify(carts));
   const dispath = useDispatch();
-  const [count, setCount] = useState(1);
-  function handleRemoveCart(cart) {
-    const action = removeToCart(cart.id);
-    dispath(action);
-  }
 
-  let i = 1;
   function calcSalePrice(price, discount) {
     return price - (price / 100) * discount;
   }
+  function handleIncrementItem(product) {
+    const action = addToCart(product);
+    dispath(action);
+  }
+  function handleDecrementItem(product) {
+    const action = decrementAnItem(product);
+    dispath(action);
+  }
+  function handleRemoveCart(product) {
+    const action = removeToCart(product);
+    dispath(action);
+  }
+  const totalItem = carts.reduce((total, product) => {
+    return total + product.quantity;
+  }, 0);
+  const totalPrice = carts.reduce((total, product) => {
+    return total + calcSalePrice(product.price, product.discount) * totalItem;
+  }, 0);
 
   return (
     <>
@@ -29,16 +41,13 @@ function Cart() {
                   <th scope="col"></th>
                   <th scope="col"></th>
                   <th scope="col">Sảm phẩm</th>
-                  <th scope="col">Giá</th>
+                  <th scope="col">Đơn giá</th>
                   <th scope="col">Số lượng</th>
                   <th scope="col">Tổng</th>
                 </tr>
               </thead>
               <tbody>
                 {carts.map((cart, i) => {
-                  {
-                    console.log(cart);
-                  }
                   return (
                     <tr key={i}>
                       <td>
@@ -57,22 +66,36 @@ function Cart() {
                           src={require(`../../assets/images/products/${cart.photo}`)}
                         />
                       </td>
-                      <td> {cart.title}</td>
                       <td>
-                        {" "}
+                        <Link
+                          className="text-muted"
+                          to={`/products/${cart.id}`}
+                        >
+                          {cart.title}
+                        </Link>
+                      </td>
+                      <td>
                         {new Intl.NumberFormat("vi-VN", {
                           style: "currency",
                           currency: "VND",
                         }).format(calcSalePrice(cart.price, cart.discount))}
                       </td>
                       <td>
-                        <div className="border  w-50 d-flex justify-content-around mx-auto">
-                          <span className="increase">
-                            <i className="fa fa-plus" aria-hidden="true"></i>
-                          </span>
-                          <span> 1</span>
+                        <div className="border w-50 d-flex justify-content-around mx-auto">
                           <span className="decrease">
-                            <i className="fa fa-minus" aria-hidden="true"></i>
+                            <i
+                              onClick={() => handleDecrementItem(cart)}
+                              className="decrease-icon fa fa-minus"
+                              aria-hidden="true"
+                            ></i>
+                          </span>
+                          <span className="quantity"> {cart.quantity}</span>
+                          <span className="increase">
+                            <i
+                              onClick={() => handleIncrementItem(cart)}
+                              className="increase-icon fa fa-plus"
+                              aria-hidden="true"
+                            ></i>
                           </span>
                         </div>
                       </td>
@@ -80,13 +103,32 @@ function Cart() {
                         {new Intl.NumberFormat("vi-VN", {
                           style: "currency",
                           currency: "VND",
-                        }).format(calcSalePrice(cart.price, cart.discount))}
+                        }).format(
+                          calcSalePrice(cart.price, cart.discount) *
+                            cart.quantity
+                        )}
                       </td>
                     </tr>
                   );
                 })}
               </tbody>
             </table>
+          </div>
+          <div className="total">
+            <h3 className="title">Tổng giỏ hàng</h3>
+            <div className="total-items">
+              Tổng sảm phẩm: {totalItem} sảm phẩm
+            </div>
+            <div className="total-price">
+              Thành tiền:{" "}
+              {new Intl.NumberFormat("vi-VN", {
+                style: "currency",
+                currency: "VND",
+              }).format(totalPrice)}
+            </div>
+            <div className="payment">
+              <button>Tiến hành thanh toán</button>
+            </div>
           </div>
         </div>
       ) : (

@@ -24,54 +24,14 @@
 @import "../styles/categories.css";
 @import "../styles/wishlist.css";
 @import "../styles/detail.css";
+@import "../styles/cart.css";
 
 // Bootstrap
 @import "bootstrap/scss/bootstrap";
+
 .product {
   cursor: pointer;
 }
 a {
   text-decoration: none;
-}
-.cart-container {
-  min-height: 600px;
-}
-.cart .increase,
-.cart .decrease {
-  font-size: 15px;
-  cursor: pointer;
-  color: #878585;
-}
-.cart .increase:hover,
-.cart .decrease:hover {
-  color: #d10024;
-}
-.cart .increase {
-  padding-top: 1px;
-  padding-left: 7px;
-  padding-right: 10px;
-  border-right: 1px solid #dee2e6;
-}
-.cart .decrease {
-  padding-top: 1px;
-  border-left: 1px solid #dee2e6;
-  padding-right: 7px;
-  padding-left: 10px;
-}
-.cart td {
-  vertical-align: middle;
-}
-.cart .cart-img {
-  width: 170px;
-}
-.cart button {
-  border-radius: 10px;
-  border: none;
-  transition: all 0.3s ease;
-}
-.cart button:hover {
-  background-color: #d10024;
-}
-.cart button:hover i {
-  color: #fff;
 }

@@ -1,9 +1,9 @@
-import Header from "./layouts/Header";
+import { ToastContainer } from "react-toastify";
 import "./assets/sass/app.scss";
 import Footer from "./layouts/Footer";
-import Nav from "./layouts/Nav";
+import Header from "./layouts/Header";
 import Main from "./layouts/Main";
-import { ToastContainer } from "react-toastify";
+import Nav from "./layouts/Nav";
 function App() {
   return (
     <div>

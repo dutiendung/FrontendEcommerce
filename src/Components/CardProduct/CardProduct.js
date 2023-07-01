@@ -1,15 +1,14 @@
 import { Button } from "react-bootstrap";
-import { Link } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
+import { Link } from "react-router-dom";
+import { toast } from "react-toastify";
 import { addToCart } from "~/Pages/Cart/cartSlice";
 import { addWishList } from "~/Pages/WishList/wishlistSlice";
-import { toast } from "react-toastify";
 
 function CardProduct({ product, categories, productReview }) {
-  //product phai map truoc khi truyen qua day
+  //product is an object
   const dispath = useDispatch();
   function handleAddToCart(product) {
-    console.log(1);
     const action = addToCart(product);
     dispath(action);
   }
@@ -23,7 +22,7 @@ function CardProduct({ product, categories, productReview }) {
   const notifyAddToCart = () =>
     toast.success("Đã thêm vào giỏ hàng ", {
       position: "top-right",
-      autoClose: 2000,
+      autoClose: 1000,
       hideProgressBar: false,
       closeOnClick: true,
       pauseOnHover: true,
@@ -34,7 +33,7 @@ function CardProduct({ product, categories, productReview }) {
   const notifyAddToWishList = () =>
     toast.success("Đã thêm vào danh sách yêu thích ", {
       position: "top-right",
-      autoClose: 2000,
+      autoClose: 1000,
       hideProgressBar: false,
       closeOnClick: true,
       pauseOnHover: true,

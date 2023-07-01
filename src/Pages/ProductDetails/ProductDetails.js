@@ -1,25 +1,20 @@
 import { useEffect, useState } from "react";
 import {
-  GET_ALL_CATEGORIES,
   GET_ALL_PRODUCTREVIEW,
   GET_PRODUCT_ID,
 } from "~/Services/Api/apiServices";
 
-import { useParams } from "react-router-dom";
 import { useDispatch } from "react-redux";
-import { addToCart } from "../Cart/cartSlice";
+import { useParams } from "react-router-dom";
 import { toast } from "react-toastify";
+import { addToCart } from "../Cart/cartSlice";
 
 function ProductDetails() {
-  const [categories, setCategories] = useState([]);
   const [product, setProduct] = useState([]);
   const [productReview, setProductReview] = useState([]);
   const dispath = useDispatch();
   const { id } = useParams();
   useEffect(() => {
-    GET_ALL_CATEGORIES("categories").then((item) => {
-      return setCategories(item.data);
-    });
     GET_PRODUCT_ID("products", id).then((item) => {
       return setProduct(item.data);
     });
@@ -35,7 +30,16 @@ function ProductDetails() {
     dispath(action);
   }
   function notofiAddToCart() {
-    toast("Đã thêm vào giỏ hàng!");
+    toast("Đã thêm vào giỏ hàng ", {
+      position: "top-right",
+      autoClose: 1000,
+      hideProgressBar: false,
+      closeOnClick: true,
+      pauseOnHover: true,
+      draggable: true,
+      progress: undefined,
+      theme: "light",
+    });
   }
   return (
     <div className="container detail">
